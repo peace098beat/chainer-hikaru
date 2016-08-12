@@ -105,9 +105,11 @@ if __name__ == '__main__':
     pool_size = config_dict["common"]["pool_size"]
     # プロセスプール
     pool = multiprocessing.Pool(processes=pool_size, initializer=start_process)
-    # 実際の処理
-    pool_outputs = pool.map(submod.calc_subprocess, commands)
-    # おまじない
-    pool.close()  # no more tasks
-    pool.join()  # wrap up current tasks
-    print 'Pool    :', pool_outputs
+    try:
+        # 実際の処理
+        pool_outputs = pool.map(submod.calc_subprocess, commands)
+        print 'Pool    :', pool_outputs
+    except KeyboardInterrupt:
+        # おまじない
+        pool.close()  # no more tasks
+        # pool.join()  # wrap up current tasks
