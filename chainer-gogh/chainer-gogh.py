@@ -219,7 +219,7 @@ if __name__ == '__main__':
     except:
         pass
     if os.path.exists(out_root_dir):
-        with open(out_root_dir, 'ab') as fro:
+        with open(out_root_dir+"task.log", 'ab') as fro:
             fro.write(datetime.datetime.today().strftime(
                 "Analys Date Time : %Y-%m-%d %H:%M:%S") + "¥n")
             fro.write(exp_name + "¥n")
