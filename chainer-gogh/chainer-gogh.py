@@ -201,10 +201,16 @@ if __name__ == '__main__':
     # output dir
     # ------------------------------------------------------------
     # /output/
+    out_root_dir = args.out_dir
     try:
         os.mkdir(args.out_dir)
     except:
         pass
+    if os.path.exists(out_root_dir):
+        with open(out_root_dir, 'ab') as fro:
+            fro.write(datetime.datetime.today().strftime("Analys Date Time : %Y-%m-%d %H:%M:%S") + "¥n")
+            fro.write(exp_name + "¥n")
+
     args.out_dir = os.path.join(args.out_dir, exp_name)
     try:
         os.mkdir(args.out_dir)
