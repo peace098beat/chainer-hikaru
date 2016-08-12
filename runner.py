@@ -5,7 +5,6 @@ runner.py
 Created by 0160929 on 2016/08/10 17:05
 """
 import argparse
-
 import multiprocessing
 import os
 import sys
@@ -17,10 +16,26 @@ def start_process():
     print 'Starting', multiprocessing.current_process().name
 
 
+LOG_RUNNER = "./log/runner.log"
+
+def runner_log(s, clean=False):
+    if clean:
+        with open(LOG_RUNNER, 'wb') as fl:
+            fl.write(s + "\n")
+            return 0
+
+    with open(LOG_RUNNER, 'ab') as fl:
+        fl.write(s + "\n")
+
 if __name__ == '__main__':
 
+
+
+    runner_log("", True)
+
+
     # PYTHON 64BIT
-    is_64bits = sys.maxsize > 2**32
+    is_64bits = sys.maxsize > 2 ** 32
     if not is_64bits:
         print("Python 32bit cant work vgg")
         sys.exit(100)
@@ -36,6 +51,7 @@ if __name__ == '__main__':
         os.mkdir("./log")
     except:
         pass
+    runner_log("PARSE COOMAND LINE")
 
     # CREATE COMMAND
     # -----------------------------------------------------------------------------
@@ -55,16 +71,16 @@ if __name__ == '__main__':
         s = "python " + config_dict["common"]["pyfile"] + ""
         # param option
         for h, p in zip(header, param):
-            s += " %s %s" % (h, p) #option をつなげる
+            s += " %s %s" % (h, p)  # option をつなげる
         s += " --id " + str(no)
         commands.append(s)
 
     # コマンドの保存
-
     with open("./log/command.log", "wb") as fc:
         fc.write("\n".join(commands))
 
     # -----------------------------------------------------------------------------
+    runner_log(">> PROCESS START")
     # プロセスサイズ
     pool_size = config_dict["common"]["pool_size"]
     # プロセスプール
