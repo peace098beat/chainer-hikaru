@@ -1,0 +1,8 @@
+
+Date Time : 2016-08-12 22:43:56
+Python is 64bit
+OS is not Windows : ('Darwin', 'fifi-MBA.local', '15.3.0', 'Darwin Kernel Version 15.3.0: Thu Dec 10 18:40:58 PST 2015; root:xnu-3248.30.4~1/RELEASE_X86_64', 'x86_64')
+> PARSE COOMAND LINE
+> config loaded ... : test_cpu.cfg
+> PROCESS START
+Starting : PoolWorker-1

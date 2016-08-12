@@ -94,11 +94,29 @@ def test_cartesian_product():
 test_cartesian_product()
 
 
+def is_windows():
+
+    flag_win32 = False
+
+    try:
+        os.uname()
+    except AttributeError:
+        flag_win32 = True
+
+    return flag_win32
+
+
 def calc_subprocess(cmd):
     import subprocess
 
+    if is_windows():
+        _cmd = cmd
+    else:
+        _cmd = cmd.split(" ")
+
+
     try:
-        subprocess.check_call(cmd)
+        subprocess.check_call(_cmd)
         return_code = 1
     except subprocess.CalledProcessError as e:
         print(">>CalledProcessError!! returncode:%r, args:%r, cmd:%r, msg:%r, output:%r" % (
@@ -202,4 +220,5 @@ def convert_config(config_path):
 
 
 if __name__ == '__main__':
-    convert_config("config.cfg")
+    # convert_config("config.cfg")
+    pass

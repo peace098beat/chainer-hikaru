@@ -10,15 +10,24 @@ import os
 import sys
 
 import runner_submodule as submod
+import datetime
+LOG_RUNNER = "./runner.log"
+
+
+def now_date():
+    return datetime.datetime.today().strftime("Date Time : %Y-%m-%d %H:%M:%S")
 
 
 def start_process():
-    print 'Starting', multiprocessing.current_process().name
+    ret = 'Starting : %s'%(multiprocessing.current_process().name,)
+    runner_log(ret)
+    print(ret)
 
-
-LOG_RUNNER = "./runner.log"
 
 def runner_log(s, clean=False):
+    if not isinstance(s, str):
+        return
+
     if clean:
         with open(LOG_RUNNER, 'wb') as fl:
             fl.write(s + "\n")
@@ -29,21 +38,29 @@ def runner_log(s, clean=False):
 
 if __name__ == '__main__':
 
-
-
     runner_log("", True)
-
+    runner_log(now_date())
 
     # PYTHON 64BIT
     is_64bits = sys.maxsize > 2 ** 32
     if not is_64bits:
         print("Python 32bit cant work vgg")
-        sys.exit(100)
+        runner_log("Python isnot 64bit... 32bit cant work vgg")
+        sys.exit(32)
+    else:
+        runner_log("Python is 64bit")
+
+    # OS Check
+    if submod.is_windows():
+        runner_log("OS is Windows")
+    else:
+        runner_log("OS is not Windows : %s" % (os.uname(),))
 
     # PARSE COMMAND LINE
     parser = argparse.ArgumentParser(
         description='A Neural Algorithm of Artistic Style')
-    parser.add_argument('--cfg', '-c', default="config.cfg", help="config file")
+    parser.add_argument(
+        '--cfg', '-c', default="config.cfg", help="config file")
     args = parser.parse_args()
 
     # LOG DIR
@@ -51,7 +68,7 @@ if __name__ == '__main__':
         os.mkdir("./log")
     except:
         pass
-    runner_log("PARSE COOMAND LINE")
+    runner_log("> PARSE COOMAND LINE")
 
     # CREATE COMMAND
     # -----------------------------------------------------------------------------
@@ -59,6 +76,7 @@ if __name__ == '__main__':
     config_path = args.cfg
     config_dict = submod.config2dict(config_path)
     submod.dict_savecsv(config_dict, "./log/config.log")
+    runner_log("> config loaded ... : %s" % (config_path,))
     # パラメータの取得
     param_dict = config_dict["parameter"]
     # 直積のリスト
@@ -76,11 +94,13 @@ if __name__ == '__main__':
         commands.append(s)
 
     # コマンドの保存
+    # -----------------------------------------------------------------------------
     with open("./log/command.log", "wb") as fc:
         fc.write("\n".join(commands))
 
+    # RUN PROCESSES
     # -----------------------------------------------------------------------------
-    runner_log(">> PROCESS START")
+    runner_log("> PROCESS START")
     # プロセスサイズ
     pool_size = config_dict["common"]["pool_size"]
     # プロセスプール

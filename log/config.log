@@ -1,0 +1,14 @@
+
+parameter
+--lr : 5
+-g : -1
+-s : ./style/512x512/style.jpg
+-m : nin
+-i : ./input/512x512/cat.jpg
+--lam : 0.001
+-w : 250
+--iter : 1000
+
+common
+pyfile : ./chainer-gogh/chainer-gogh.py
+pool_size : 1
