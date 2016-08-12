@@ -8,6 +8,7 @@ runner.pyのサブ関数
 # print(__file__)
 import ConfigParser
 import json
+import os
 
 import time
 
@@ -137,6 +138,10 @@ def calc_subprocess2(cmd):
 
 
 def config2dict(config_path):
+    assert os.path.exists(config_path)
+    if not os.path.exists(config_path):
+        raise IOError("not found config %s"%(config_path,))
+
     # Parse Config
     config = ConfigParser.RawConfigParser()
     config.read(config_path)
