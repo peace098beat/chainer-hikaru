@@ -8,8 +8,10 @@ test:
 	python -m unittest discover -s cainer-gogh/tests
 
 clean:
-	rm -rf ./log
-	rm -rf ./output
+	rm -rf ./log/
+	rm -rf ./output/
+	rm -rf *.log
+	rm -rf *.pyc
 
 clean-pyc:
 	rm *.pyc
