@@ -105,9 +105,9 @@ def calc_subprocess(cmd):
             e.returncode, e.args, e.cmd, e.message, e.output))
         return_code = -1
     except OSError as e:
-        print(">>ERROR!! return errno:%r, args:%r, filename:%r, msg:%r, strerror:%r" % (
-            e.errno, e.args, e.filename, e.message, e.strerror))
-        return_code = -1
+        print(">>ERROR!! return errno:%r, args:%r, filename:%r, msg:%r, strerror:%r, cmd:%r" % (
+            e.errno, e.args, e.filename, e.message, e.strerror, cmd))
+        return_code = -2
 
     return return_code
 

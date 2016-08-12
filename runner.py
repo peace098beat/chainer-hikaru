@@ -16,7 +16,7 @@ def start_process():
     print 'Starting', multiprocessing.current_process().name
 
 
-LOG_RUNNER = "./log/runner.log"
+LOG_RUNNER = "./runner.log"
 
 def runner_log(s, clean=False):
     if clean:
