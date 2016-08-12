@@ -29,7 +29,8 @@ def image_resize(img_file, width):
     if orig_w > orig_h:
         new_w = width
         new_h = width * orig_h / orig_w
-        gogh = np.asarray(gogh.resize((new_w, new_h)))[:, :, :3].transpose(2, 0, 1)[::-1].astype(np.float32)
+        gogh = np.asarray(gogh.resize((new_w, new_h)))[:, :, :3].transpose(
+            2, 0, 1)[::-1].astype(np.float32)
         gogh = gogh.reshape((1, 3, new_h, new_w))
         print("image resized to: ", gogh.shape)
         hoge = np.zeros((1, 3, width, width), dtype=np.float32)
@@ -38,7 +39,8 @@ def image_resize(img_file, width):
     else:
         new_w = width * orig_w / orig_h
         new_h = width
-        gogh = np.asarray(gogh.resize((new_w, new_h)))[:, :, :3].transpose(2, 0, 1)[::-1].astype(np.float32)
+        gogh = np.asarray(gogh.resize((new_w, new_h)))[:, :, :3].transpose(
+            2, 0, 1)[::-1].astype(np.float32)
         gogh = gogh.reshape((1, 3, new_h, new_w))
         print("image resized to: ", gogh.shape)
         hoge = np.zeros((1, 3, width, width), dtype=np.float32)
@@ -74,11 +76,13 @@ def get_matrix(y):
     ch = y.data.shape[1]
     wd = y.data.shape[2]
     gogh_y = F.reshape(y, (ch, wd ** 2))
-    gogh_matrix = F.matmul(gogh_y, gogh_y, transb=True) / np.float32(ch * wd ** 2)
+    gogh_matrix = F.matmul(
+        gogh_y, gogh_y, transb=True) / np.float32(ch * wd ** 2)
     return gogh_matrix
 
 
 class Clip(chainer.Function):
+
     def forward(self, x):
         x = x[0]
         ret = cuda.elementwise(
@@ -91,13 +95,16 @@ class Clip(chainer.Function):
 
 def generate_image(img_orig, img_style, width, nw, nh, max_iter, lr, img_gen=None):
     mid_orig = nn.forward(Variable(img_orig, volatile=True))
-    style_mats = [get_matrix(y) for y in nn.forward(Variable(img_style, volatile=True))]
+    style_mats = [get_matrix(y)
+                  for y in nn.forward(Variable(img_style, volatile=True))]
 
     if img_gen is None:
         if args.gpu >= 0:
-            img_gen = xp.random.uniform(-20, 20, (1, 3, width, width), dtype=np.float32)
+            img_gen = xp.random.uniform(-20, 20,
+                                        (1, 3, width, width), dtype=np.float32)
         else:
-            img_gen = np.random.uniform(-20, 20, (1, 3, width, width)).astype(np.float32)
+            img_gen = np.random.uniform(-20, 20,
+                                        (1, 3, width, width)).astype(np.float32)
     img_gen = chainer.links.Parameter(img_gen)
     optimizer = optimizers.Adam(alpha=lr)
     optimizer.setup(img_gen)
@@ -112,9 +119,11 @@ def generate_image(img_orig, img_style, width, nw, nh, max_iter, lr, img_gen=Non
             ch = y[l].data.shape[1]
             wd = y[l].data.shape[2]
             gogh_y = F.reshape(y[l], (ch, wd ** 2))
-            gogh_matrix = F.matmul(gogh_y, gogh_y, transb=True) / np.float32(ch * wd ** 2)
+            gogh_matrix = F.matmul(
+                gogh_y, gogh_y, transb=True) / np.float32(ch * wd ** 2)
 
-            L1 = np.float32(args.lam) * np.float32(nn.alpha[l]) * F.mean_squared_error(y[l], Variable(mid_orig[l].data))
+            L1 = np.float32(
+                args.lam) * np.float32(nn.alpha[l]) * F.mean_squared_error(y[l], Variable(mid_orig[l].data))
             L2 = np.float32(nn.beta[l]) * F.mean_squared_error(gogh_matrix, Variable(style_mats[l].data)) / np.float32(
                 len(y))
             L += L1 + L2
@@ -128,12 +137,14 @@ def generate_image(img_orig, img_style, width, nw, nh, max_iter, lr, img_gen=Non
 
         tmp_shape = x.data.shape
         if args.gpu >= 0:
-            img_gen.W.data += Clip().forward(img_gen.W.data).reshape(tmp_shape) - img_gen.W.data
+            img_gen.W.data += Clip().forward(img_gen.W.data).reshape(tmp_shape) - \
+                img_gen.W.data
         else:
             def clip(x):
                 return -120 if x < -120 else (136 if x > 136 else x)
 
-            img_gen.W.data += np.vectorize(clip)(img_gen.W.data).reshape(tmp_shape) - img_gen.W.data
+            img_gen.W.data += np.vectorize(clip)(
+                img_gen.W.data).reshape(tmp_shape) - img_gen.W.data
 
         if i % 100 == 0:
             save_image(img_gen.W.data, W, nw, nh, i)
@@ -208,7 +219,8 @@ if __name__ == '__main__':
         pass
     if os.path.exists(out_root_dir):
         with open(out_root_dir, 'ab') as fro:
-            fro.write(datetime.datetime.today().strftime("Analys Date Time : %Y-%m-%d %H:%M:%S") + "¥n")
+            fro.write(datetime.datetime.today().strftime(
+                "Analys Date Time : %Y-%m-%d %H:%M:%S") + "¥n")
             fro.write(exp_name + "¥n")
 
     args.out_dir = os.path.join(args.out_dir, exp_name)
@@ -216,7 +228,6 @@ if __name__ == '__main__':
         os.mkdir(args.out_dir)
     except:
         pass
-
 
     # LOGGER
     # ------------------------------------------------------------
@@ -242,7 +253,8 @@ if __name__ == '__main__':
 ***********************************************************
 """
     errorlog(HIKARU_AI_LOGO, True)
-    errorlog(datetime.datetime.today().strftime("Analys Date Time : %Y-%m-%d %H:%M:%S"))
+    errorlog(datetime.datetime.today().strftime(
+        "Analys Date Time : %Y-%m-%d %H:%M:%S"))
     errorlog()
     errorlog("id : %03d" % args.id)
     errorlog("model : %s" % args.model)
@@ -261,14 +273,15 @@ if __name__ == '__main__':
     # ORING IMAGE EXISTS TEST
     if not os.path.exists(args.orig_img):
         errorlog(">> ERROR ... orig_img not found : %s" % (args.orig_img))
-        errorlog(">> ERROR ... orig_img not found : %s" % (os.path.realpath(args.orig_img)))
+        errorlog(">> ERROR ... orig_img not found : %s" %
+                 (os.path.realpath(args.orig_img)))
         sys.exit(201)
     # STYLE IMAGE EXISTS TEST
     if not os.path.exists(args.style_img):
         errorlog(">> ERROR ... style not found : %s" % (args.style_img))
-        errorlog(">> ERROR ... style not found : %s" % (os.path.realpath(args.style_img)))
+        errorlog(">> ERROR ... style not found : %s" %
+                 (os.path.realpath(args.style_img)))
         sys.exit(202)
-
 
     # CUDA Setting
     # ------------------------------------------------------------
@@ -279,7 +292,6 @@ if __name__ == '__main__':
         xp = cuda.cupy
     else:
         xp = np
-
 
     # MODEL LOAD
     # ------------------------------------------------------------
@@ -300,7 +312,6 @@ if __name__ == '__main__':
     if not os.path.exists(fn):
         errorlog(">> ERROR ... model not found : %s" % (fn))
         fn = None
-
 
     if 'nin' in args.model:
         nn = NIN(fn)
@@ -323,7 +334,8 @@ if __name__ == '__main__':
     img_content, nw, nh = image_resize(args.orig_img, W)
     img_style, _, _ = image_resize(args.style_img, W)
 
-    generate_image(img_content, img_style, W, nw, nh, img_gen=None, max_iter=args.iter, lr=args.lr)
+    generate_image(img_content, img_style, W, nw, nh,
+                   img_gen=None, max_iter=args.iter, lr=args.lr)
 
     # Process End
     dt = ptimer_chainer_gogh()
